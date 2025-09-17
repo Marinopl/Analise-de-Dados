@@ -1,0 +1,9 @@
+relationship 9449fab2-4595-44f2-a0ff-6f5eb0f24f10
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Vendas.'Data Pedido'
+	toColumn: LocalDateTable_e754e119-1e5c-4e4b-aeae-62af31c17e04.Date
+
+relationship AutoDetected_03ffe64d-f283-4169-b372-94926da8875c
+	fromColumn: Vendas.'Código Loja'
+	toColumn: lojas.'Código Loja'
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "Vendas BI"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "976267b6-506d-47fc-bda4-f9332f17ea92"
+  }
+}

@@ -1,0 +1,21 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["lojas","Vendas"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table lojas
+ref table Vendas
+ref table DateTableTemplate_adc91684-afac-4454-b327-2b560f0860cf
+ref table LocalDateTable_e754e119-1e5c-4e4b-aeae-62af31c17e04
+
+ref cultureInfo pt-BR
+

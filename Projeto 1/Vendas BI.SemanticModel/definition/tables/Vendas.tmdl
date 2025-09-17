@@ -1,0 +1,111 @@
+table Vendas
+	lineageTag: 6c77067f-e08b-4ed0-893f-d80ae46a90e0
+
+	measure Comissão = SUM(Vendas[Valor Venda])*0.05
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 20049c9c-f05b-4601-9828-3be6095a2f21
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column 'ID Pedido'
+		dataType: string
+		lineageTag: be2d69f1-5cca-4996-b5d9-6c355675bbf2
+		summarizeBy: none
+		sourceColumn: ID Pedido
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data Pedido'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c41bbac7-369b-4825-bdaa-0249f79fc835
+		summarizeBy: none
+		sourceColumn: Data Pedido
+
+		variation Variation
+			isDefault
+			relationship: 9449fab2-4595-44f2-a0ff-6f5eb0f24f10
+			defaultHierarchy: LocalDateTable_e754e119-1e5c-4e4b-aeae-62af31c17e04.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Código Loja'
+		dataType: string
+		lineageTag: 1886c4f1-3ff0-4528-8f55-18d9857703e1
+		summarizeBy: none
+		sourceColumn: Código Loja
+
+		annotation SummarizationSetBy = Automatic
+
+	column Produto
+		dataType: string
+		lineageTag: 926fde9a-e714-4a4f-8553-20bf8bcdf8a6
+		summarizeBy: none
+		sourceColumn: Produto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantidade
+		dataType: int64
+		formatString: 0
+		lineageTag: 78a026a5-3680-4695-bc11-6b23285b9d4a
+		summarizeBy: sum
+		sourceColumn: Quantidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Preço Unitário'
+		dataType: decimal
+		formatString: "R$"\ #,0.###############;-"R$"\ #,0.###############;"R$"\ #,0.###############
+		lineageTag: 4836b847-b796-4c62-9f0b-266db97815ab
+		summarizeBy: sum
+		sourceColumn: Preço Unitário
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	column Pagamento
+		dataType: string
+		lineageTag: c5d67204-c3aa-488e-ad18-a3576dedd080
+		summarizeBy: none
+		sourceColumn: Pagamento
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Valor Venda'
+		dataType: decimal
+		formatString: "R$"\ #,0;-"R$"\ #,0;"R$"\ #,0
+		lineageTag: 95b8a253-f8ed-4f99-a199-c606c5d19785
+		summarizeBy: sum
+		sourceColumn: Valor Venda
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"pt-BR"}
+
+	partition Vendas = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\Marino\Downloads\bd_vendas.xlsx"), null, true),
+				    registroVendas_Sheet = Fonte{[Item="registroVendas",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(registroVendas_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"ID Pedido", type text}, {"Data Pedido", type date}, {"Código Loja", type text}, {"Produto", type text}, {"Qtde/Preco Unit", type text}, {"Pagamento", type text}}),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Tipo Alterado","Malaa","Mala",Replacer.ReplaceText,{"Produto"}),
+				    #"Colocar Cada Palavra Em Maiúscula" = Table.TransformColumns(#"Valor Substituído",{{"Produto", Text.Proper, type text}}),
+				    #"Dividir Coluna por Delimitador" = Table.SplitColumn(#"Colocar Cada Palavra Em Maiúscula", "Qtde/Preco Unit", Splitter.SplitTextByDelimiter("/", QuoteStyle.Csv), {"Qtde/Preco Unit.1", "Qtde/Preco Unit.2"}),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Dividir Coluna por Delimitador",{{"Qtde/Preco Unit.1", Int64.Type}, {"Qtde/Preco Unit.2", type number}}),
+				    #"Colunas Renomeadas" = Table.RenameColumns(#"Tipo Alterado1",{{"Qtde/Preco Unit.1", "Quantidade"}, {"Qtde/Preco Unit.2", "Preço Unitário"}}),
+				    #"Tipo Alterado2" = Table.TransformColumnTypes(#"Colunas Renomeadas",{{"Quantidade", Int64.Type}, {"Preço Unitário", Currency.Type}}),
+				    #"Multiplicação Inserida" = Table.AddColumn(#"Tipo Alterado2", "Multiplicação", each [Quantidade] * [Preço Unitário], Currency.Type),
+				    #"Colunas Renomeadas1" = Table.RenameColumns(#"Multiplicação Inserida",{{"Multiplicação", "Valor Venda"}})
+				in
+				    #"Colunas Renomeadas1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
