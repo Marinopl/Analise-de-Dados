@@ -1,0 +1,32 @@
+CRISP-DM - CRoss Industry Standard Process for Data Mining
+
+1. Entendimento do Negócio:
+    - Definição do Problema
+    - Alinhamento de expectativas
+
+2. Entendimento dos dados e 3. Preparação dos dados:
+    - Engenharia de dados -> entender a estrutura dos dados
+    - Database
+    - Pipelines
+
+4. Anpalise / Modelagem:
+    - Análise exploratórias -> Remete-se ao papel da engenharia de dados
+    - Tratamento dos dados
+    - Definição do modelo de Machine Learning que será utilizado
+        -> Verificar qual modelo é o melhor
+        -> Ele é escalável?
+        -> Ele pode ser generalizado para futuros dados?
+        -> Qual a acurácia?
+
+5. Validação do modelo
+
+6. Preparação e Visualização:
+    - Finalização para produção ou voltar ao Entendimento do Negócio
+
+É um processo cíclio que funciona para qualquer Database
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+https://scikit-learn.org/stable/supervised_learning.html
